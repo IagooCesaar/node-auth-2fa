@@ -11,7 +11,7 @@
     "./src/modules/**/entities/*.ts"
   ],
 
-  "migration": [
+  "migrations": [
     "./src/shared/infra/typeorm/migrations/*.ts"
   ],
   "migrationsTableName": "_migrations",
