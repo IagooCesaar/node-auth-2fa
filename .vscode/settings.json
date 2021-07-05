@@ -1,6 +1,7 @@
 {
   "cSpell.ignoreWords": [
     "middlewares",
+    "postgres",
     "typeorm",
     "varchar"
   ]
