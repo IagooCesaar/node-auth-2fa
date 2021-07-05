@@ -1,0 +1,25 @@
+version: "3.7"
+
+services: 
+  database:
+    image: postgres
+    container_name: database_auth2fa
+    restart: always
+    ports: 
+      - 5435:5432
+    environment: 
+      - POSTGRES_USER=docker
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=auth2fa
+    volumes:
+      - pgdata:/data/postgres
+    networks:
+      - backend
+
+volumes:
+  pgdata:
+    driver: local
+    
+networks:
+  backend: 
+    driver: "bridge"

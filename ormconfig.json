@@ -2,7 +2,7 @@
   "type": "postgres",
 
   "host": "localhost",
-  "port": 5432,
+  "port": 5435,
   "database": "auth2fa",
   "username": "docker",
   "password": "secret",
