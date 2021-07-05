@@ -5,6 +5,8 @@ import { IUserResponseDTO } from "@modules/users/dtos/IUserResponseDTO";
 import { UserMap } from "@modules/users/mappers/UserMap";
 import { IUsersRepository } from "@modules/users/repositories/IUsersRepository";
 
+import { CreateUserError } from "./createUserError";
+
 interface IRequest {
   name: string;
   email: string;
@@ -23,6 +25,11 @@ class CreateUserUseCase {
     name,
     password,
   }: IRequest): Promise<IUserResponseDTO> {
+    const userAlreadyExists = await this.usersRepository.findByEmail(email);
+    if (userAlreadyExists) {
+      throw new CreateUserError.EmailIsAlreadyInUse();
+    }
+
     const hashedPassword = await hash(
       password,
       Number(process.env.DEFAULT_HASH_SAULT)
