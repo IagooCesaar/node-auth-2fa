@@ -13,7 +13,8 @@ describe("Generate2faKeyUseCase", () => {
     userSecondFactorKeyRepositoryInMemory =
       new InMemoryUserSecondFactorKeyRepository();
     generate2faKeyUseCase = new Generate2faKeyUseCase(
-      userSecondFactorKeyRepositoryInMemory
+      userSecondFactorKeyRepositoryInMemory,
+      userRepositoryInMemory
     );
   });
 
