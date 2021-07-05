@@ -3,6 +3,7 @@
     "dtos",
     "middlewares",
     "postgres",
+    "tsyringe",
     "typeorm",
     "varchar"
   ]
