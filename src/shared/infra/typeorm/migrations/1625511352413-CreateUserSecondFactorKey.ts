@@ -11,6 +11,8 @@ export class CreateUserSecondFactorKey1625511352413
           { name: "user_id", type: "uuid", isPrimary: true },
           { name: "key", type: "varchar" },
           { name: "created_at", type: "timestamp", default: "now()" },
+          { name: "validated", type: "boolean", default: "false" },
+          { name: "validated_at", type: "timestamp" },
         ],
         foreignKeys: [
           {
