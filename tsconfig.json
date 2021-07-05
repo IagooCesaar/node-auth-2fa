@@ -3,6 +3,7 @@
     "target": "es5",
     "module": "commonjs",
     "outDir": "./dist",
+    "rootDir": "./",
     "baseUrl": "./src/",
     "paths": {
       "@modules/*": [
@@ -20,6 +21,7 @@
     },
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true
   }
 }
