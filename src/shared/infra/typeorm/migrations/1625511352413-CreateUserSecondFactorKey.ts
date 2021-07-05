@@ -8,7 +8,7 @@ export class CreateUserSecondFactorKey1625511352413
       new Table({
         name: "UserSecondFactorKey",
         columns: [
-          { name: "user_id", type: "uudi", isPrimary: true },
+          { name: "user_id", type: "uuid", isPrimary: true },
           { name: "key", type: "varchar" },
           { name: "created_at", type: "timestamp", default: "now()" },
         ],
