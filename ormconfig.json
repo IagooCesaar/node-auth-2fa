@@ -1,0 +1,22 @@
+{
+  "type": "postgres",
+
+  "host": "localhost",
+  "port": 5432,
+  "database": "auth2fa",
+  "username": "docker",
+  "password": "secret",
+
+  "entities": [
+    "./src/modules/**/entities/*.ts"
+  ],
+
+  "migration": [
+    "./src/shared/infra/typeorm/migrations/*.ts"
+  ],
+  "migrationsTableName": "_migrations",
+
+  "cli": {
+    "migrationsDir": "./src/shared/infra/typeorm/migrations"
+  }
+}
