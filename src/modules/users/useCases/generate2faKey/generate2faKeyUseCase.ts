@@ -1,4 +1,5 @@
 import { inject, injectable } from "tsyringe";
+import { v4 as uuidV4 } from "uuid";
 
 import { UserSecondFactorKey } from "@modules/users/infra/typeorm/entities/UserSecondFactorKey";
 import { IUserSecondFactorKeyRepository } from "@modules/users/repositories/IUserSecondFactorKeyRepository";
@@ -21,8 +22,14 @@ class Generate2faKeyUseCase {
     if (!user) {
       throw new Generate2faKeyError.UserNotFound();
     }
-    // deletar chaves não validadas
+    await this.userSecondFactorKeyRepository.removeUnvalidatedKeys(user_id);
     // gerar uma nova chave
+    const key = uuidV4();
+    const new2fa = await this.userSecondFactorKeyRepository.generate(
+      user_id,
+      key
+    );
+    return new2fa;
   }
 }
 
