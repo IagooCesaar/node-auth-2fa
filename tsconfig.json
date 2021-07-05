@@ -36,8 +36,21 @@
     // "noImplicitOverride": true,                  
     // "noPropertyAccessFromIndexSignature": true,  
     // "moduleResolution": "node",                  
-    // "baseUrl": "./",                             
-    // "paths": {},                                 
+    "baseUrl": "./src/",
+    "paths": {
+      "@modules/*": [
+        "modules/*"
+      ],
+      "@config/*": [
+        "config/*"
+      ],
+      "@shared/*": [
+        "shared/*"
+      ],
+      "@utils/*": [
+        "utils/*"
+      ]
+    },
     // "rootDirs": [],                              
     // "typeRoots": [],                             
     // "types": [],                                 
