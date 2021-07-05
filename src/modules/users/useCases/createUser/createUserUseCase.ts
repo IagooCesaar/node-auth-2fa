@@ -23,7 +23,7 @@ class CreateUserUseCase {
     name,
     password,
   }: IRequest): Promise<IUserResponseDTO> {
-    const hashedPassword = hash(
+    const hashedPassword = await hash(
       password,
       Number(process.env.DEFAULT_HASH_SAULT)
     );
