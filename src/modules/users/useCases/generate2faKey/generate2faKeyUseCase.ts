@@ -11,7 +11,9 @@ class Generate2faKeyUseCase {
   ) {}
 
   async execute(user_id: string): Promise<UserSecondFactorKey> {
-    //
+    // verificar se usuário existe
+    // deletar chaves não validadas
+    // gerar uma nova chave
   }
 }
 
