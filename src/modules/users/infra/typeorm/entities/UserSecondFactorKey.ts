@@ -25,6 +25,12 @@ class UserSecondFactorKey {
 
   @CreateDateColumn()
   created_at: Date;
+
+  @Column()
+  validated: boolean;
+
+  @Column()
+  validated_at: Date;
 }
 
 export { UserSecondFactorKey };
