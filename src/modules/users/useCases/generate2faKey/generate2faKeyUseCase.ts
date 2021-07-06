@@ -29,6 +29,8 @@ class Generate2faKeyUseCase {
       user_id,
       key
     );
+    // gerar QR Code
+    // Disponibilizar URI otpauth://totp/'+NomeChave+'?secret='+sURL
     return new2fa;
   }
 }
