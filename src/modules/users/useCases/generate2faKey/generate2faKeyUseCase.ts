@@ -4,7 +4,6 @@ import { v4 as uuidV4 } from "uuid";
 
 import uploadConfig from "@config/upload";
 import { IUserSecondFactorKeyResponseDTO } from "@modules/users/dtos/IUserSecondFactorKeyResponseDTO";
-import { UserSecondFactorKey } from "@modules/users/infra/typeorm/entities/UserSecondFactorKey";
 import { UserSecondFactorKeyMap } from "@modules/users/mappers/UserSecondFactorKeyMap";
 import { IUserSecondFactorKeyRepository } from "@modules/users/repositories/IUserSecondFactorKeyRepository";
 import { IUsersRepository } from "@modules/users/repositories/IUsersRepository";
@@ -51,9 +50,8 @@ class Generate2faKeyUseCase {
       throw new Generate2faKeyError.QRCodeNotGenerated();
     }
 
-    let qrCodeFile = "";
     if (fileExists(fileDirTmp)) {
-      qrCodeFile = await this.storageProvider.save(fileName, "qrcode");
+      await this.storageProvider.save(fileName, "qrcode");
     } else {
       throw new Generate2faKeyError.QRCodeNotFound();
     }
