@@ -35,7 +35,7 @@ class UserSecondFactorKey {
 
   @Expose({ name: "qrcode_url" })
   qrcode_url(): string {
-    return `${process.env.APP_API_URL}/qrcode/${this.user_id}.png`;
+    return `${process.env.APP_API_URL}/users/qrcode/${this.user_id}.png`;
   }
 }
 
