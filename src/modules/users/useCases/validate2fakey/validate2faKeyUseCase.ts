@@ -1,5 +1,7 @@
 import OTP from "otp";
-import { injectable } from "tsyringe";
+import { inject, injectable } from "tsyringe";
+
+import { IUserSecondFactorKeyRepository } from "@modules/users/repositories/IUserSecondFactorKeyRepository";
 
 interface IRequest {
   user_id: string;
@@ -8,13 +10,25 @@ interface IRequest {
 
 @injectable()
 class Validate2faKeyUseCase {
-  async execute({ user_id, totp_code }: IRequest): Promise<string> {
+  constructor(
+    @inject("UserSecondFactorKeyRepository")
+    private userSecondFactorKeyRepository: IUserSecondFactorKeyRepository
+  ) {}
+
+  async execute({
+    user_id,
+    totp_code,
+  }: IRequest): Promise<{ code: string; now: number }> {
+    const { key } = await this.userSecondFactorKeyRepository.findByUserId(
+      user_id,
+      false
+    );
     const otp = new OTP({
-      secret:
-        "N4MLKPIVFCEDVE7FT4DSHWG634PD6ZLMUFWKM3GKBRXRYH2ZJWANMUKWQTQKHJWG5WOOS36GRMDLDJBAOGNZOOS2TVY7GBKBAOJRSCIA",
+      secret: key,
     });
-    const code = otp.totp(Date.now());
-    return code;
+    const now = Date.now();
+    const code = otp.totp(now);
+    return { code, now };
   }
 }
 
