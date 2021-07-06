@@ -36,19 +36,22 @@ class Generate2faKeyUseCase {
       user_id,
       key
     );
-    const fileName = `${uploadConfig.tmpFolder}/${user_id}.png`;
+    const fileName = `${user_id}.png`;
+    const fileDirTmp = `${uploadConfig.tmpFolder}/${fileName}`;
+
     await deleteFile(fileName);
     const keyName = "Node 2FA";
     const uri = encodeURI(`otpauth://totp/${keyName}?secret=${key}`);
 
     try {
-      await qrcode.toFile(fileName, uri, {});
+      await qrcode.toFile(fileDirTmp, uri, {});
     } catch {
       throw new Generate2faKeyError.QRCodeNotGenerated();
     }
 
-    if (fileExists(fileName)) {
-      await this.storageProvider.save(fileName, "qrcode");
+    let qrCodeFile;
+    if (fileExists(fileDirTmp)) {
+      qrCodeFile = await this.storageProvider.save(fileName, "qrcode");
     } else {
       throw new Generate2faKeyError.QRCodeNotFound();
     }
