@@ -1,4 +1,5 @@
 import { container } from "tsyringe";
+import "./providers";
 
 import { UserSecondFactorKeyRepository } from "@modules/users/infra/typeorm/repositories/UserSecondFactorKeyRepository";
 import { UsersRepository } from "@modules/users/infra/typeorm/repositories/UsersRepository";
