@@ -17,6 +17,7 @@
     "express": "^4.17.1",
     "express-async-errors": "^3.1.1",
     "pg": "^8.6.0",
+    "qrcode": "^1.4.4",
     "reflect-metadata": "^0.1.13",
     "tsyringe": "^4.5.0",
     "typeorm": "^0.2.34",
@@ -25,6 +26,7 @@
   "devDependencies": {
     "@types/express": "^4.17.12",
     "@types/jest": "^26.0.23",
+    "@types/qrcode": "^1.4.0",
     "@typescript-eslint/parser": "^4.28.1",
     "cross-env": "^7.0.3",
     "eslint": "^7.30.0",
