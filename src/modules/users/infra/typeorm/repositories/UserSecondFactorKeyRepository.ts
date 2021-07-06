@@ -10,6 +10,17 @@ class UserSecondFactorKeyRepository implements IUserSecondFactorKeyRepository {
     this.repository = getRepository(UserSecondFactorKey);
   }
 
+  async findByUserId(
+    user_id: string,
+    validated: boolean
+  ): Promise<UserSecondFactorKey> {
+    const key = await this.repository.findOne({
+      user_id,
+      validated,
+    });
+    return key;
+  }
+
   async removeUnvalidatedKeys(user_id: string): Promise<void> {
     await this.repository
       .createQueryBuilder()

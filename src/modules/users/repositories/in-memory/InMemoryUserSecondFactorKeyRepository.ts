@@ -7,6 +7,15 @@ class InMemoryUserSecondFactorKeyRepository
 {
   userSecondFactorKey: UserSecondFactorKey[] = [];
 
+  async findByUserId(
+    user_id: string,
+    validated: boolean
+  ): Promise<UserSecondFactorKey> {
+    return this.userSecondFactorKey.find((user) => {
+      return user.user_id === user_id && user.validated === validated;
+    });
+  }
+
   async removeUnvalidatedKeys(user_id: string): Promise<void> {
     const keys = this.userSecondFactorKey.filter((item) => {
       return (
