@@ -1,6 +1,6 @@
+import OTP from "otp";
 import qrcode from "qrcode";
 import { inject, injectable } from "tsyringe";
-import { v4 as uuidV4 } from "uuid";
 
 import uploadConfig from "@config/upload";
 import { IUserSecondFactorKeyResponseDTO } from "@modules/users/dtos/IUserSecondFactorKeyResponseDTO";
@@ -32,7 +32,9 @@ class Generate2faKeyUseCase {
     }
     await this.userSecondFactorKeyRepository.removeUnvalidatedKeys(user_id);
     // gerar uma nova chave
-    const key = uuidV4();
+    const otp = new OTP({});
+    const key = otp.secret;
+
     const new2fa = await this.userSecondFactorKeyRepository.generate(
       user_id,
       key
