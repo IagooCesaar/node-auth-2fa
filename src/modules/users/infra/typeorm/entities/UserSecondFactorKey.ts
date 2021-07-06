@@ -1,3 +1,4 @@
+import { Expose } from "class-transformer";
 import {
   Column,
   CreateDateColumn,
@@ -31,6 +32,11 @@ class UserSecondFactorKey {
 
   @Column()
   validated_at: Date;
+
+  @Expose({ name: "qrcode_url" })
+  qrcode_url(): string {
+    return `${process.env.APP_API_URL}/qrcode/${this.user_id}.png`;
+  }
 }
 
 export { UserSecondFactorKey };
