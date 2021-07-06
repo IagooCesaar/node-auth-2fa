@@ -12,7 +12,7 @@ export class CreateUserSecondFactorKey1625511352413
           { name: "key", type: "varchar" },
           { name: "created_at", type: "timestamp", default: "now()" },
           { name: "validated", type: "boolean", default: "false" },
-          { name: "validated_at", type: "timestamp" },
+          { name: "validated_at", type: "timestamp", isNullable: true },
         ],
         foreignKeys: [
           {
