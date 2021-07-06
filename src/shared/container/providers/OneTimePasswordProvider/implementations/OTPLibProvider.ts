@@ -20,7 +20,7 @@ function loadOptions() {
 }
 
 class OTPLibProvider implements IOneTimePasswordProvider {
-  verifyToken(token: string, secret: string) {
+  verifyToken(token: string, secret: string): boolean {
     loadOptions();
     return totp.verify({ token, secret });
   }
