@@ -4,17 +4,20 @@ import { totp } from "otplib";
 import { IOneTimePasswordProvider } from "../IOneTimePasswordProvider";
 
 function loadOptions() {
-  const data1 = new Date();
-  const data2 = new Date(data1.valueOf() - data1.getTimezoneOffset() * 60000);
-  const epoch = Math.floor(data2.valueOf() / 100);
+  const now = Date.now();
 
-  console.log("totp.options", data2.toISOString(), epoch);
+  const date0 = new Date();
+  const gmtMilliseconds = date0.getTimezoneOffset() * 60000;
+  const regionDate = new Date(date0.valueOf() - gmtMilliseconds);
+  const epoch = Math.floor(regionDate.getTime() / 1);
+
+  console.log("totp.options", regionDate.toISOString(), epoch);
 
   totp.resetOptions();
   totp.options = {
     digits: 6,
     step: 30,
-    window: 5,
+    window: 500,
     epoch,
   };
 }
