@@ -30,6 +30,7 @@ describe("Generate2faKeyUseCase", () => {
     });
     const secondFactor = await generate2faKeyUseCase.execute(user.id);
     expect(secondFactor).toHaveProperty("key");
+    expect(secondFactor).toHaveProperty("qrcode_url");
   });
   // it("Should be able to validate a key for a user", async () => {});
 
