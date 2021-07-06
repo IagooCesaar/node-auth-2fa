@@ -48,9 +48,6 @@ describe("Generate2faKeyUseCase", () => {
     expect(secondFactor1.key).not.toBe(secondFactor2.key);
   });
 
-  // it("Should be able to validate a key for a user", async () => {});
-
   // it("Should not be able to generate a key for a inexistent user", async () => {});
   // it("Should not be able to generate a key for a invalid user", async () => {});
-  // it("Should not be able to validate a key with incorrect validation code", async () => {});
 });
