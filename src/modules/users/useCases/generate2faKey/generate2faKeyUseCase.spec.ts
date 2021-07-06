@@ -2,6 +2,7 @@ import { InMemoryUserSecondFactorKeyRepository } from "@modules/users/repositori
 import { InMemoryUsersRepository } from "@modules/users/repositories/in-memory/InMemoryUsersRepository";
 import { LocalStorageProvider } from "@shared/container/providers/StorageProvider/implementations/LocalStorageProvider";
 
+import { Generate2faKeyError } from "./generate2faKeyError";
 import { Generate2faKeyUseCase } from "./generate2faKeyUseCase";
 
 let generate2faKeyUseCase: Generate2faKeyUseCase;
@@ -48,6 +49,10 @@ describe("Generate2faKeyUseCase", () => {
     expect(secondFactor1.key).not.toBe(secondFactor2.key);
   });
 
-  // it("Should not be able to generate a key for a inexistent user", async () => {});
-  // it("Should not be able to generate a key for a invalid user", async () => {});
+  it("Should not be able to generate a key for a inexistent user", async () => {
+    const user_id = "fake_id";
+    await expect(generate2faKeyUseCase.execute(user_id)).rejects.toBeInstanceOf(
+      Generate2faKeyError.UserNotFound
+    );
+  });
 });
