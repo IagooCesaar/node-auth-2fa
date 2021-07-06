@@ -1,12 +1,13 @@
-import OTP from "otp";
 import qrcode from "qrcode";
 import { inject, injectable } from "tsyringe";
+import { v4 as uuidV4 } from "uuid";
 
 import uploadConfig from "@config/upload";
 import { IUserSecondFactorKeyResponseDTO } from "@modules/users/dtos/IUserSecondFactorKeyResponseDTO";
 import { UserSecondFactorKeyMap } from "@modules/users/mappers/UserSecondFactorKeyMap";
 import { IUserSecondFactorKeyRepository } from "@modules/users/repositories/IUserSecondFactorKeyRepository";
 import { IUsersRepository } from "@modules/users/repositories/IUsersRepository";
+import { IOneTimePasswordProvider } from "@shared/container/providers/OneTimePasswordProvider/IOneTimePasswordProvider";
 import { IStorageProvider } from "@shared/container/providers/StorageProvider/IStorageProvider";
 import { deleteFile, fileExists } from "@utils/file";
 
@@ -22,7 +23,10 @@ class Generate2faKeyUseCase {
     private usersRepository: IUsersRepository,
 
     @inject("StorageProvider")
-    private storageProvider: IStorageProvider
+    private storageProvider: IStorageProvider,
+
+    @inject("OneTimePasswordProvider")
+    private otp: IOneTimePasswordProvider
   ) {}
 
   async execute(user_id: string): Promise<IUserSecondFactorKeyResponseDTO> {
@@ -32,8 +36,9 @@ class Generate2faKeyUseCase {
     }
     await this.userSecondFactorKeyRepository.removeUnvalidatedKeys(user_id);
     // gerar uma nova chave
-    const otp = new OTP({});
-    const key = otp.secret;
+    // const otp = new OTP({});
+    // const key = otp.secret;
+    const key = this.otp.generateBase32Key(uuidV4());
 
     const new2fa = await this.userSecondFactorKeyRepository.generate(
       user_id,
