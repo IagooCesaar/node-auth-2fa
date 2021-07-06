@@ -3,6 +3,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/visualstudiocode,linux,node,windows
 # Edit at https://www.toptal.com/developers/gitignore?templates=visualstudiocode,linux,node,windows
 
+tmp/qrcode/*
+tmp/test/qrcode/*
+
 ### Linux ###
 *~
 
