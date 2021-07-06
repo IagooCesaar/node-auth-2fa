@@ -1,9 +1,13 @@
+import qrcode from "qrcode";
 import { inject, injectable } from "tsyringe";
 import { v4 as uuidV4 } from "uuid";
 
+import uploadConfig from "@config/upload";
 import { UserSecondFactorKey } from "@modules/users/infra/typeorm/entities/UserSecondFactorKey";
 import { IUserSecondFactorKeyRepository } from "@modules/users/repositories/IUserSecondFactorKeyRepository";
 import { IUsersRepository } from "@modules/users/repositories/IUsersRepository";
+import { IStorageProvider } from "@shared/container/providers/StorageProvider/IStorageProvider";
+import { deleteFile, fileExists } from "@utils/file";
 
 import { Generate2faKeyError } from "./generate2faKeyError";
 
@@ -14,7 +18,10 @@ class Generate2faKeyUseCase {
     private userSecondFactorKeyRepository: IUserSecondFactorKeyRepository,
 
     @inject("UsersRepository")
-    private usersRepository: IUsersRepository
+    private usersRepository: IUsersRepository,
+
+    @inject("StorageProvider")
+    private storageProvider: IStorageProvider
   ) {}
 
   async execute(user_id: string): Promise<UserSecondFactorKey> {
@@ -29,8 +36,23 @@ class Generate2faKeyUseCase {
       user_id,
       key
     );
-    // gerar QR Code
-    // Disponibilizar URI otpauth://totp/'+NomeChave+'?secret='+sURL
+    const fileName = `${uploadConfig.tmpFolder}/${user_id}.png`;
+    await deleteFile(fileName);
+    const keyName = "Node 2FA";
+    const uri = encodeURI(`otpauth://totp/${keyName}?secret=${key}`);
+
+    try {
+      await qrcode.toFile(fileName, uri, {});
+    } catch {
+      throw new Generate2faKeyError.QRCodeNotGenerated();
+    }
+
+    if (fileExists(fileName)) {
+      await this.storageProvider.save(fileName, "qrcode");
+    } else {
+      throw new Generate2faKeyError.QRCodeNotFound();
+    }
+
     return new2fa;
   }
 }
