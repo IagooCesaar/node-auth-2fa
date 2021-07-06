@@ -12,6 +12,7 @@ class LocalStorageProvider implements IStorageProvider {
       path.resolve(upload.tmpFolder, file),
       path.resolve(`${upload.tmpFolder}/${folder}`, file)
     );
+    await deleteFile(path.resolve(upload.tmpFolder, file));
     return file;
   }
 
