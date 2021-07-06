@@ -3,7 +3,9 @@ import { inject, injectable } from "tsyringe";
 import { v4 as uuidV4 } from "uuid";
 
 import uploadConfig from "@config/upload";
+import { IUserSecondFactorKeyResponseDTO } from "@modules/users/dtos/IUserSecondFactorKeyResponseDTO";
 import { UserSecondFactorKey } from "@modules/users/infra/typeorm/entities/UserSecondFactorKey";
+import { UserSecondFactorKeyMap } from "@modules/users/mappers/UserSecondFactorKeyMap";
 import { IUserSecondFactorKeyRepository } from "@modules/users/repositories/IUserSecondFactorKeyRepository";
 import { IUsersRepository } from "@modules/users/repositories/IUsersRepository";
 import { IStorageProvider } from "@shared/container/providers/StorageProvider/IStorageProvider";
@@ -24,7 +26,7 @@ class Generate2faKeyUseCase {
     private storageProvider: IStorageProvider
   ) {}
 
-  async execute(user_id: string): Promise<UserSecondFactorKey> {
+  async execute(user_id: string): Promise<IUserSecondFactorKeyResponseDTO> {
     const user = await this.usersRepository.findById(user_id);
     if (!user) {
       throw new Generate2faKeyError.UserNotFound();
@@ -49,14 +51,14 @@ class Generate2faKeyUseCase {
       throw new Generate2faKeyError.QRCodeNotGenerated();
     }
 
-    let qrCodeFile;
+    let qrCodeFile = "";
     if (fileExists(fileDirTmp)) {
       qrCodeFile = await this.storageProvider.save(fileName, "qrcode");
     } else {
       throw new Generate2faKeyError.QRCodeNotFound();
     }
 
-    return new2fa;
+    return UserSecondFactorKeyMap.toDTO(new2fa);
   }
 }
 
