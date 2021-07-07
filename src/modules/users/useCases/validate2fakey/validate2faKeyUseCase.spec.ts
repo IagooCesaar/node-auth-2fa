@@ -68,4 +68,20 @@ describe("validate2faKeyUseCase", () => {
       })
     ).rejects.toBeInstanceOf(Validate2faKeyError.IncorrectCode);
   });
+
+  it("Should not be able to validate with inexistent Key", async () => {
+    const { id: user_id } = await usersRepository.create({
+      email: "john.doe@example.com",
+      name: "John Doe",
+      password: "secret",
+    });
+
+    const totp_code = "000000";
+    await expect(
+      validate2faKeyUseCase.execute({
+        user_id,
+        totp_code,
+      })
+    ).rejects.toBeInstanceOf(Validate2faKeyError.NoKeysPendingValidation);
+  });
 });
