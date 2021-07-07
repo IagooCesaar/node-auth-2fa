@@ -10,6 +10,27 @@ class UserSecondFactorKeyRepository implements IUserSecondFactorKeyRepository {
     this.repository = getRepository(UserSecondFactorKey);
   }
 
+  async changeValidKey(user_id: string): Promise<void> {
+    await this.repository
+      .createQueryBuilder()
+      .delete()
+      .where("user_id = :user_id and validated = :validated", {
+        user_id,
+        validated: true,
+      })
+      .execute();
+
+    await this.repository
+      .createQueryBuilder()
+      .update()
+      .set({
+        validated: true,
+        validated_at: new Date(),
+      })
+      .where("user_id = :user_id", { user_id })
+      .execute();
+  }
+
   async findByUserId(
     user_id: string,
     validated: boolean

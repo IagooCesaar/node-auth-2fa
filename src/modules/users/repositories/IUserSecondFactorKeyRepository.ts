@@ -7,6 +7,7 @@ interface IUserSecondFactorKeyRepository {
     user_id: string,
     validated: boolean
   ): Promise<UserSecondFactorKey>;
+  changeValidKey(user_id: string): Promise<void>;
 }
 
 export { IUserSecondFactorKeyRepository };
