@@ -3,9 +3,16 @@ import { inject, injectable } from "tsyringe";
 import { IUserSecondFactorKeyRepository } from "@modules/users/repositories/IUserSecondFactorKeyRepository";
 import { IOneTimePasswordProvider } from "@shared/container/providers/OneTimePasswordProvider/IOneTimePasswordProvider";
 
+import { Validate2faKeyError } from "./validate2faKeyError";
+
 interface IRequest {
   user_id: string;
   totp_code: string;
+}
+
+interface IResponse {
+  isCorrect: boolean;
+  message: string;
 }
 
 @injectable()
@@ -18,18 +25,28 @@ class Validate2faKeyUseCase {
     private otp: IOneTimePasswordProvider
   ) {}
 
-  async execute({
-    user_id,
-    totp_code,
-  }: IRequest): Promise<{ code: string; key: string; valid: boolean }> {
-    const { key } = await this.userSecondFactorKeyRepository.findByUserId(
-      user_id,
-      false
-    );
+  async execute({ user_id, totp_code }: IRequest): Promise<IResponse> {
+    const userSecondFactorData =
+      await this.userSecondFactorKeyRepository.findByUserId(user_id, false);
+    if (!userSecondFactorData) {
+      throw new Validate2faKeyError.NoKeysPendingValidation();
+    }
 
-    const code = this.otp.generateToken(key);
-    const valid = this.otp.verifyToken(totp_code, key);
-    return { code, valid, key };
+    const { key } = userSecondFactorData;
+    const isCorrect = this.otp.verifyToken(totp_code, key);
+    if (!isCorrect) {
+      return {
+        isCorrect,
+        message: "This code is not correct. Try again",
+      };
+    }
+
+    // Remover chave validada e tornar esta chave como válida
+    return {
+      isCorrect,
+      message:
+        "All set up. This will be your new key for two-factor authentication",
+    };
   }
 }
 
