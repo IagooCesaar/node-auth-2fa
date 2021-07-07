@@ -49,7 +49,7 @@ class Generate2faKeyUseCase {
 
     await deleteFile(fileName);
     const keyName = "Node 2FA";
-    const uri = encodeURI(`otpauth://totp/${keyName}?secret=${key}`);
+    const uri = this.otp.generateKeyURI(user.email, keyName, key);
 
     try {
       await qrcode.toFile(fileDirTmp, uri, {});
