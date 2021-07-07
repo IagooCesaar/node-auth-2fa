@@ -26,7 +26,6 @@ class Validate2faKeyUseCase {
       user_id,
       false
     );
-    console.log({ key });
 
     const code = this.otp.generateToken(key);
     const valid = this.otp.verifyToken(totp_code, key);
