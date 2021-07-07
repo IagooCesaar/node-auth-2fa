@@ -3,10 +3,6 @@ import { authenticator } from "otplib";
 import { IOneTimePasswordProvider } from "../IOneTimePasswordProvider";
 
 function loadOptions() {
-  const date0 = new Date();
-  const gmtMilliseconds = date0.getTimezoneOffset() * 60000;
-  const regionDate = new Date(date0.valueOf() - gmtMilliseconds);
-
   authenticator.resetOptions();
   authenticator.options = {
     ...authenticator.options,
@@ -15,7 +11,6 @@ function loadOptions() {
     window: 5,
     epoch: Date.now(),
   };
-  console.log(authenticator.options, regionDate.toISOString());
 }
 
 class OTPLibProvider implements IOneTimePasswordProvider {
