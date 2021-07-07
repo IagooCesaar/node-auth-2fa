@@ -1,6 +1,6 @@
 /* eslint-disable max-classes-per-file */
 /* eslint-disable @typescript-eslint/no-namespace */
-import { AppError } from "@shared/erros/appError";
+import { AppError } from "@shared/errors/appError";
 
 export namespace Generate2faKeyError {
   export class UserNotFound extends AppError {

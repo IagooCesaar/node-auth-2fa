@@ -4,7 +4,7 @@ interface IUserSecondFactorKeyResponseDTO {
   created_at: Date;
   validated: boolean;
   validated_at?: Date;
-  qrcode_url?: string;
+  qrcode_url: () => string;
 }
 
 export { IUserSecondFactorKeyResponseDTO };
