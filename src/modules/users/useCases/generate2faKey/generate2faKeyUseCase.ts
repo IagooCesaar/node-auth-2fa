@@ -1,6 +1,5 @@
 import qrcode from "qrcode";
 import { inject, injectable } from "tsyringe";
-import { v4 as uuidV4 } from "uuid";
 
 import uploadConfig from "@config/upload";
 import { IUserSecondFactorKeyResponseDTO } from "@modules/users/dtos/IUserSecondFactorKeyResponseDTO";
@@ -35,18 +34,15 @@ class Generate2faKeyUseCase {
       throw new Generate2faKeyError.UserNotFound();
     }
     await this.userSecondFactorKeyRepository.removeUnvalidatedKeys(user_id);
-    // gerar uma nova chave
-    // const otp = new OTP({});
-    // const key = otp.secret;
-    const key = this.otp.generateBase32Key(uuidV4());
 
+    const key = this.otp.generateBase32Key();
     const new2fa = await this.userSecondFactorKeyRepository.generate(
       user_id,
       key
     );
+
     const fileName = `${user_id}.png`;
     const fileDirTmp = `${uploadConfig.tmpFolder}/${fileName}`;
-
     await deleteFile(fileName);
     const keyName = "Node 2FA";
     const uri = this.otp.generateKeyURI(user.email, keyName, key);
