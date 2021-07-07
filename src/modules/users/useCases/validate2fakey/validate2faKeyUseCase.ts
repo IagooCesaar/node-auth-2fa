@@ -21,7 +21,7 @@ class Validate2faKeyUseCase {
   async execute({
     user_id,
     totp_code,
-  }: IRequest): Promise<{ code: string; valid: boolean }> {
+  }: IRequest): Promise<{ code: string; key: string; valid: boolean }> {
     const { key } = await this.userSecondFactorKeyRepository.findByUserId(
       user_id,
       false
@@ -30,7 +30,7 @@ class Validate2faKeyUseCase {
 
     const code = this.otp.generateToken(key);
     const valid = this.otp.verifyToken(totp_code, key);
-    return { code, valid };
+    return { code, valid, key };
   }
 }
 
