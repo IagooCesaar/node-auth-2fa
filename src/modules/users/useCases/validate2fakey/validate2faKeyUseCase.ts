@@ -41,7 +41,8 @@ class Validate2faKeyUseCase {
       };
     }
 
-    // Remover chave validada e tornar esta chave como válida
+    await this.userSecondFactorKeyRepository.changeValidKey(user_id);
+
     return {
       isCorrect,
       message:
