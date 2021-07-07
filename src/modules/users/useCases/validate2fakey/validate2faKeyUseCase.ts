@@ -35,10 +35,7 @@ class Validate2faKeyUseCase {
     const { key } = userSecondFactorData;
     const isCorrect = this.otp.verifyToken(totp_code, key);
     if (!isCorrect) {
-      return {
-        isCorrect,
-        message: "This code is not correct. Try again",
-      };
+      throw new Validate2faKeyError.IncorrectCode();
     }
 
     await this.userSecondFactorKeyRepository.changeValidKey(user_id);

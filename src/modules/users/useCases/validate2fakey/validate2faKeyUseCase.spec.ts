@@ -4,6 +4,7 @@ import { OTPLibProvider } from "@shared/container/providers/OneTimePasswordProvi
 import { LocalStorageProvider } from "@shared/container/providers/StorageProvider/implementations/LocalStorageProvider";
 
 import { Generate2faKeyUseCase } from "../generate2faKey/generate2faKeyUseCase";
+import { Validate2faKeyError } from "./validate2faKeyError";
 import { Validate2faKeyUseCase } from "./validate2faKeyUseCase";
 
 let validate2faKeyUseCase: Validate2faKeyUseCase;
@@ -32,7 +33,8 @@ describe("validate2faKeyUseCase", () => {
       otp
     );
   });
-  it("Should be able to create a new Key for a user", async () => {
+
+  it("Should be able to validate a new Key for a user", async () => {
     const { id: user_id } = await usersRepository.create({
       email: "john.doe@example.com",
       name: "John Doe",
@@ -47,5 +49,23 @@ describe("validate2faKeyUseCase", () => {
       totp_code,
     });
     expect(response.isCorrect).toBe(true);
+  });
+
+  it("Should not be able to validate Key with invalide code", async () => {
+    const { id: user_id } = await usersRepository.create({
+      email: "john.doe@example.com",
+      name: "John Doe",
+      password: "secret",
+    });
+
+    await generate2faKeyUseCase.execute(user_id);
+    const totp_code = "000000";
+
+    await expect(
+      validate2faKeyUseCase.execute({
+        user_id,
+        totp_code,
+      })
+    ).rejects.toBeInstanceOf(Validate2faKeyError.IncorrectCode);
   });
 });

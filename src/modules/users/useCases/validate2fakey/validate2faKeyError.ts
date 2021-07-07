@@ -11,4 +11,13 @@ export namespace Validate2faKeyError {
       );
     }
   }
+
+  export class IncorrectCode extends AppError {
+    constructor() {
+      super(
+        "Validate2faKeyError.IncorrectCode",
+        "This code is not correct. Try again"
+      );
+    }
+  }
 }
