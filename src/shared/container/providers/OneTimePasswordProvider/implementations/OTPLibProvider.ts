@@ -14,15 +14,22 @@ function loadOptions() {
   console.log("totp.options", regionDate.toISOString(), epoch);
 
   totp.resetOptions();
+
   totp.options = {
+    ...totp.options,
     digits: 6,
     step: 30,
-    window: 500,
+    window: 5,
     epoch,
   };
+  console.log(totp.options);
 }
 
 class OTPLibProvider implements IOneTimePasswordProvider {
+  generateKeyURI(accountName: string, issuer: string, secret: string): string {
+    return totp.keyuri(accountName, issuer, secret);
+  }
+
   verifyToken(token: string, secret: string): boolean {
     loadOptions();
     return totp.verify({ token, secret });
@@ -31,6 +38,7 @@ class OTPLibProvider implements IOneTimePasswordProvider {
   generateToken(secret: string): string {
     loadOptions();
     const token = totp.generate(secret);
+
     return token;
   }
 
