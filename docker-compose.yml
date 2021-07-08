@@ -19,6 +19,7 @@ services:
   redis:
     image: redis:5.0.5-alpine
     container_name: cache_auth2fa
+    restart: always
     ports:
       - "6379:6379"
     entrypoint: ["redis-server", "--appendonly", "yes"]
