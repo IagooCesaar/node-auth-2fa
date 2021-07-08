@@ -5,19 +5,13 @@ import { AppError } from "@shared/errors/appError";
 export namespace ValidateCredentialsError {
   export class UserNotFound extends AppError {
     constructor() {
-      super(
-        "ValidateCredentialsError.UserNotFound",
-        "Email or password incorrect"
-      );
+      super("ValidateCredentialsError.UserNotFound", "User cannot be found");
     }
   }
 
   export class PasswordNotMatched extends AppError {
     constructor() {
-      super(
-        "ValidateCredentialsError.PasswordNotMatched",
-        "Email or password incorrect"
-      );
+      super("ValidateCredentialsError.PasswordNotMatched", "Wrong password");
     }
   }
 }

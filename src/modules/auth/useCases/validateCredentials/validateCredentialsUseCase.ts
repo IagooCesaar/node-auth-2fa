@@ -18,7 +18,7 @@ interface IResponse {
   expiresInMinutes: number;
 }
 
-injectable();
+@injectable()
 class ValidateCredentialsUseCase {
   constructor(
     @inject("UsersRepository")
@@ -33,12 +33,14 @@ class ValidateCredentialsUseCase {
     if (!user) {
       throw new ValidateCredentialsError.UserNotFound();
     }
+
     const passwordMatch = await compare(password, user.password);
     if (!passwordMatch) {
       throw new ValidateCredentialsError.PasswordNotMatched();
     }
 
     const temporaryToken = uuidV4();
+
     await this.cacheProvider.set(
       auth.cache_temporary_token_prefix,
       temporaryToken,
