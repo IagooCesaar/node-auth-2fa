@@ -11,12 +11,15 @@ import { DayjsDateProvider } from "@shared/container/providers/DateProvider/impl
 import { OTPLibProvider } from "@shared/container/providers/OneTimePasswordProvider/implementations/OTPLibProvider";
 import { LocalStorageProvider } from "@shared/container/providers/StorageProvider/implementations/LocalStorageProvider";
 
+import { ValidateCredentialsUseCase } from "../validateCredentials/validateCredentialsUseCase";
 import { ValidateTwoFactorKeyUseCase } from "./validateTwoFactorKeyUseCase";
 
 let createUserUseCase: CreateUserUseCase;
 let generate2faKeyUseCase: Generate2faKeyUseCase;
+let validateCredentialsUseCase: ValidateCredentialsUseCase;
 let validateTwoFactorKeyUseCase: ValidateTwoFactorKeyUseCase;
 let validate2faKeyUseCase: Validate2faKeyUseCase;
+
 let userSecondFactorKeyRepository: InMemoryUserSecondFactorKeyRepository;
 let usersRepository: InMemoryUsersRepository;
 let userTokensRepository: InMemoryUserTokensRepository;
@@ -41,6 +44,11 @@ describe("Validate Two Factor Key Use Case", () => {
       cacheProvider,
       otp,
       dateProvider
+    );
+
+    validateCredentialsUseCase = new ValidateCredentialsUseCase(
+      usersRepository,
+      cacheProvider
     );
 
     createUserUseCase = new CreateUserUseCase(usersRepository);
