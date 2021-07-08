@@ -16,6 +16,17 @@ services:
     networks:
       - backend
 
+  redis:
+    image: redis:5.0.5-alpine
+    container_name: cache_auth2fa
+    ports:
+      - "6379:6379"
+    entrypoint: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - "./database/redis:/data"
+    networks:
+      - backend
+
 volumes:
   pgdata:
     driver: local
