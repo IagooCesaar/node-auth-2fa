@@ -11,7 +11,7 @@ import { v4 as uuidV4 } from "uuid";
 import { User } from "@modules/users/infra/typeorm/entities/User";
 
 @Entity("UserTokens")
-class UsersTokens {
+class UserTokens {
   @PrimaryColumn()
   id: string;
 
@@ -38,4 +38,4 @@ class UsersTokens {
   }
 }
 
-export { UsersTokens };
+export { UserTokens };
