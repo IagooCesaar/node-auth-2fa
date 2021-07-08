@@ -1,6 +1,8 @@
 import { container } from "tsyringe";
 import "./providers";
 
+import { UserTokensRepository } from "@modules/auth/infra/repositories/UserTokensRepository";
+import { IUserTokensRepository } from "@modules/auth/repositories/IUserTokensRepository";
 import { UserSecondFactorKeyRepository } from "@modules/users/infra/typeorm/repositories/UserSecondFactorKeyRepository";
 import { UsersRepository } from "@modules/users/infra/typeorm/repositories/UsersRepository";
 import { IUserSecondFactorKeyRepository } from "@modules/users/repositories/IUserSecondFactorKeyRepository";
@@ -14,4 +16,9 @@ container.registerSingleton<IUsersRepository>(
 container.registerSingleton<IUserSecondFactorKeyRepository>(
   "UserSecondFactorKeyRepository",
   UserSecondFactorKeyRepository
+);
+
+container.registerSingleton<IUserTokensRepository>(
+  "UserTokensRepository",
+  UserTokensRepository
 );
