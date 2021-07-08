@@ -72,6 +72,32 @@ describe("Validate Two Factor Key Use Case", () => {
   });
 
   it("Should be able to validate a key and permit authentication", async () => {
+    const userDTO = {
+      name: "John Doe",
+      email: "john.doe@example.com",
+      password: "secret",
+    };
+    const { id: user_id } = await createUserUseCase.execute(userDTO);
+    const { key } = await generate2faKeyUseCase.execute(user_id);
+    let totp_code = otp.generateToken(key);
+
+    await validate2faKeyUseCase.execute({
+      user_id,
+      totp_code,
+    });
+
+    const { temporaryToken } = await validateCredentialsUseCase.execute({
+      email: userDTO.email,
+      password: userDTO.password,
+    });
+
+    totp_code = otp.generateToken(key);
+    const response = await validateTwoFactorKeyUseCase.execute({
+      temporaryToken,
+      totp_code,
+    });
+
+    expect(response).toHaveProperty("token");
     //
   });
 
