@@ -6,10 +6,25 @@ class RedisCacheProvider implements ICacheProvider {
   client: Redis.Redis = null;
 
   constructor() {
-    this.client = new Redis({
+    this.client = this.connect();
+  }
+
+  connect(): Redis.Redis {
+    const connection = new Redis({
       host: process.env.REDIS_HOST,
       port: Number(process.env.REDIS_PORT),
     });
+    // connection.on("connect", () => {
+    //   console.log("redis connected");
+    // });
+    // connection.on("error", (err) => {
+    //   console.log("redis error", err);
+    // });
+    return connection;
+  }
+
+  disconnect(): void {
+    this.client.disconnect();
   }
 
   async get(prefix: string, key: string): Promise<string> {
