@@ -6,6 +6,7 @@ import { IUserTokensRepository } from "@modules/auth/repositories/IUserTokensRep
 import { IUserSecondFactorKeyRepository } from "@modules/users/repositories/IUserSecondFactorKeyRepository";
 import { IUsersRepository } from "@modules/users/repositories/IUsersRepository";
 import { ICacheProvider } from "@shared/container/providers/CacheProvider/ICacheProvider";
+import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
 import { IOneTimePasswordProvider } from "@shared/container/providers/OneTimePasswordProvider/IOneTimePasswordProvider";
 
 import { ValidateTwoFactorKeyError } from "./validateTwoFactorKeyError";
@@ -40,7 +41,10 @@ class ValidateTwoFactorKeyUseCase {
     private cacheProvider: ICacheProvider,
 
     @inject("OneTimePasswordProvider")
-    private otp: IOneTimePasswordProvider
+    private otp: IOneTimePasswordProvider,
+
+    @inject("DateProvider")
+    private dateProvider: IDateProvider
   ) {}
 
   async execute({ temporaryToken, totp_code }: IRequest): Promise<IResponse> {
