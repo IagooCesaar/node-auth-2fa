@@ -12,6 +12,7 @@ import { OTPLibProvider } from "@shared/container/providers/OneTimePasswordProvi
 import { LocalStorageProvider } from "@shared/container/providers/StorageProvider/implementations/LocalStorageProvider";
 
 import { ValidateCredentialsUseCase } from "../validateCredentials/validateCredentialsUseCase";
+import { ValidateTwoFactorKeyError } from "./validateTwoFactorKeyError";
 import { ValidateTwoFactorKeyUseCase } from "./validateTwoFactorKeyUseCase";
 
 let createUserUseCase: CreateUserUseCase;
@@ -98,14 +99,85 @@ describe("Validate Two Factor Key Use Case", () => {
     });
 
     expect(response).toHaveProperty("token");
-    //
   });
 
-  // it("Should not be able to validate a incorrect key", async () => {
-  //   //
-  // });
+  it("Should not be able to validate a incorrect temporary code", async () => {
+    const userDTO = {
+      name: "John Doe",
+      email: "john.doe@example.com",
+      password: "secret",
+    };
+    const { id: user_id } = await createUserUseCase.execute(userDTO);
+    const { key } = await generate2faKeyUseCase.execute(user_id);
+    let totp_code = otp.generateToken(key);
 
-  // it("Should not be able to validate with a incorrect temporary login code", async () => {
-  //   //
-  // });
+    await validate2faKeyUseCase.execute({
+      user_id,
+      totp_code,
+    });
+
+    await validateCredentialsUseCase.execute({
+      email: userDTO.email,
+      password: userDTO.password,
+    });
+
+    totp_code = otp.generateToken(key);
+    await expect(
+      validateTwoFactorKeyUseCase.execute({
+        temporaryToken: "fake-token",
+        totp_code,
+      })
+    ).rejects.toBeInstanceOf(ValidateTwoFactorKeyError.TemporaryTokenNotFound);
+  });
+
+  it("Should not be able to validate with a incorrect totp code", async () => {
+    const userDTO = {
+      name: "John Doe",
+      email: "john.doe@example.com",
+      password: "secret",
+    };
+    const { id: user_id } = await createUserUseCase.execute(userDTO);
+    const { key } = await generate2faKeyUseCase.execute(user_id);
+    const totp_code = otp.generateToken(key);
+
+    await validate2faKeyUseCase.execute({
+      user_id,
+      totp_code,
+    });
+
+    const { temporaryToken } = await validateCredentialsUseCase.execute({
+      email: userDTO.email,
+      password: userDTO.password,
+    });
+
+    await expect(
+      validateTwoFactorKeyUseCase.execute({
+        temporaryToken,
+        totp_code: "000000",
+      })
+    ).rejects.toBeInstanceOf(ValidateTwoFactorKeyError.IncorrectCode);
+  });
+
+  it("Should not be able to validate two-factor code with non-existent validated key", async () => {
+    const userDTO = {
+      name: "John Doe",
+      email: "john.doe@example.com",
+      password: "secret",
+    };
+    const { id: user_id } = await createUserUseCase.execute(userDTO);
+    const { key } = await generate2faKeyUseCase.execute(user_id);
+
+    const { temporaryToken } = await validateCredentialsUseCase.execute({
+      email: userDTO.email,
+      password: userDTO.password,
+    });
+
+    const totp_code = otp.generateToken(key);
+    await expect(
+      validateTwoFactorKeyUseCase.execute({
+        temporaryToken,
+        totp_code,
+      })
+    ).rejects.toBeInstanceOf(ValidateTwoFactorKeyError.NoValidKey);
+  });
 });
