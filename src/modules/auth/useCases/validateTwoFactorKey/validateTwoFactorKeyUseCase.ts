@@ -71,7 +71,7 @@ class ValidateTwoFactorKeyUseCase {
       expiresIn: auth.expires_in,
     });
 
-    // gerar e armazenar refresh token
+    // gerar refresh token
     const refreshToken = sign(
       { email: user.email },
       auth.secret_refresh_token,
@@ -80,6 +80,8 @@ class ValidateTwoFactorKeyUseCase {
         expiresIn: auth.expires_in_refresh_token,
       }
     );
+
+    // armazenar refresh token
 
     return {
       token,
