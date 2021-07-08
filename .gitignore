@@ -5,6 +5,7 @@
 
 tmp/qrcode/*
 tmp/test/qrcode/*
+database/*
 
 ### Linux ###
 *~
