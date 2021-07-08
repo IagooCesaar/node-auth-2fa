@@ -36,6 +36,7 @@ describe("Validate Two Factor Key Use Case", () => {
     cacheProvider = new RedisCacheProvider();
     otp = new OTPLibProvider();
     dateProvider = new DayjsDateProvider();
+    storageProvider = new LocalStorageProvider();
 
     validateTwoFactorKeyUseCase = new ValidateTwoFactorKeyUseCase(
       userSecondFactorKeyRepository,
