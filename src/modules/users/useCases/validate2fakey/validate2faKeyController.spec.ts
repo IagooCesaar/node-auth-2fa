@@ -41,8 +41,9 @@ describe("Generate 2FA Controller", () => {
     const rawData = await connection.query(
       `SELECT "UserSecondFactorKey".key 
       FROM "UserSecondFactorKey"
-      WHERE "UserSecondFactorKey".user_id = $1`,
-      [user_id]
+      WHERE "UserSecondFactorKey".user_id = $1
+      and "UserSecondFactorKey".validated = $2`,
+      [user_id, false]
     );
     const { key } = rawData[0];
 
@@ -56,5 +57,41 @@ describe("Generate 2FA Controller", () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty("isCorrect");
     expect(response.body.isCorrect).toBe(true);
+  });
+
+  it("Should not be able to validate a QRCode with no keys pending of validation", async () => {
+    //
+    const responseUser = await request(app).post("/users").send({
+      name: "John Doe Two",
+      email: "john.doe.two@example.com",
+      password: "secret",
+    });
+    const { id: user_id } = responseUser.body.user as IResponseUser;
+
+    await request(app).post("/users/generate2fa").send({ user_id });
+
+    // obter chave, gerar totp e enviar para validação
+    const rawData = await connection.query(
+      `SELECT "UserSecondFactorKey".key 
+      FROM "UserSecondFactorKey"
+      WHERE "UserSecondFactorKey".user_id = $1`,
+      [user_id]
+    );
+    const { key } = rawData[0];
+
+    const otp = new OTPLibProvider();
+    const totp_code = otp.generateToken(key);
+
+    await request(app).post("/users/validate2fa").send({ user_id, totp_code });
+
+    const response = await request(app)
+      .post("/users/validate2fa")
+      .send({ user_id, totp_code });
+
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty("errorCode");
+    expect(response.body.errorCode).toBe(
+      "Validate2faKeyError.NoKeysPendingValidation"
+    );
   });
 });
