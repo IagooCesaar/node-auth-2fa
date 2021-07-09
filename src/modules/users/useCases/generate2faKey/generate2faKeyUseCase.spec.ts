@@ -34,7 +34,6 @@ describe("Generate2faKeyUseCase", () => {
       password: "secret",
     });
     const secondFactor = await generate2faKeyUseCase.execute(user.id);
-    expect(secondFactor).toHaveProperty("key");
     expect(secondFactor).toHaveProperty("qrcode_url");
   });
 
@@ -44,13 +43,15 @@ describe("Generate2faKeyUseCase", () => {
       name: "Jhon Doe",
       password: "secret",
     });
-    const secondFactor1 = await generate2faKeyUseCase.execute(user.id);
-    expect(secondFactor1).toHaveProperty("key");
+    await generate2faKeyUseCase.execute(user.id);
+    const { key: key1 } =
+      await userSecondFactorKeyRepositoryInMemory.findByUserId(user.id, false);
 
-    const secondFactor2 = await generate2faKeyUseCase.execute(user.id);
-    expect(secondFactor2).toHaveProperty("key");
+    await generate2faKeyUseCase.execute(user.id);
+    const { key: key2 } =
+      await userSecondFactorKeyRepositoryInMemory.findByUserId(user.id, false);
 
-    expect(secondFactor1.key).not.toBe(secondFactor2.key);
+    expect(key1).not.toBe(key2);
   });
 
   it("Should not be able to generate a key for a inexistent user", async () => {
