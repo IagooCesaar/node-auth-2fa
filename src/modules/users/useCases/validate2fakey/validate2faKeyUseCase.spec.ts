@@ -41,7 +41,12 @@ describe("validate2faKeyUseCase", () => {
       password: "secret",
     });
 
-    const { key } = await generate2faKeyUseCase.execute(user_id);
+    await generate2faKeyUseCase.execute(user_id);
+    const { key } = await usersSecondFactorKeyRepository.findByUserId(
+      user_id,
+      false
+    );
+
     const totp_code = otp.generateToken(key);
 
     const response = await validate2faKeyUseCase.execute({
