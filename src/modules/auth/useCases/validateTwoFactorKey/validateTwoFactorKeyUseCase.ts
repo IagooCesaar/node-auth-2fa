@@ -94,7 +94,6 @@ class ValidateTwoFactorKeyUseCase {
       auth.expires_refresh_token_days,
       null
     );
-
     await this.userTokensRepository.create({
       user_id,
       refresh_token: refreshToken,
