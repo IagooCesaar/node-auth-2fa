@@ -17,12 +17,13 @@ export async function ensureAuthenticated(
   if (!authHeader) {
     throw new EnsureAuthenticatedError.TokenMissing();
   }
-  const [_, token] = authHeader.split(" "); // Bearer Token
+  const [, token] = authHeader.split(" "); // Bearer Token
   try {
     const { sub: user_id } = verify(token, auth.secret_token) as IPayload;
     request.user = {
       id: user_id,
     };
+    next();
   } catch (error) {
     throw new EnsureAuthenticatedError.InvalidToken();
   }
