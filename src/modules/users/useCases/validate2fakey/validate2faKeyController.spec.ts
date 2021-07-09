@@ -94,4 +94,26 @@ describe("Generate 2FA Controller", () => {
       "Validate2faKeyError.NoKeysPendingValidation"
     );
   });
+
+  it("Should not be able to validate a QRCode with incorrect TOTP code", async () => {
+    //
+    const responseUser = await request(app).post("/users").send({
+      name: "John Doe Three",
+      email: "john.doe.three@example.com",
+      password: "secret",
+    });
+    const { id: user_id } = responseUser.body.user as IResponseUser;
+
+    await request(app).post("/users/generate2fa").send({ user_id });
+
+    const totp_code = "000000";
+
+    const response = await request(app)
+      .post("/users/validate2fa")
+      .send({ user_id, totp_code });
+
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty("errorCode");
+    expect(response.body.errorCode).toBe("Validate2faKeyError.IncorrectCode");
+  });
 });
