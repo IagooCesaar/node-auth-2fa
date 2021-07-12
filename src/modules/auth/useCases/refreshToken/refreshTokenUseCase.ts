@@ -79,8 +79,8 @@ class RefreshTokenUseCase {
     });
 
     return {
-      refreshToken: newRefreshToken,
       token,
+      refreshToken: newRefreshToken,
     };
   }
 }

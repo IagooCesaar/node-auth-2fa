@@ -1,6 +1,7 @@
 import "dotenv/config";
 
 import { InMemoryUserTokensRepository } from "@modules/auth/repositories/in-memory/InMemoryUserTokensRepository";
+import { UserSecondFactorKey } from "@modules/users/infra/typeorm/entities/UserSecondFactorKey";
 import { InMemoryUserSecondFactorKeyRepository } from "@modules/users/repositories/in-memory/InMemoryUserSecondFactorKeyRepository";
 import { InMemoryUsersRepository } from "@modules/users/repositories/in-memory/InMemoryUsersRepository";
 import { CreateUserUseCase } from "@modules/users/useCases/createUser/createUserUseCase";
@@ -18,6 +19,7 @@ import { RefreshTokenUseCase } from "./refreshTokenUseCase";
 
 let userTokensRepository: InMemoryUserTokensRepository;
 let usersRepository: InMemoryUsersRepository;
+let userSecondFactorKeyRepository: InMemoryUserSecondFactorKeyRepository;
 let dateProvider: IDateProvider;
 let storageProvider: LocalStorageProvider;
 let otp: OTPLibProvider;
@@ -27,7 +29,6 @@ let refreshTokenUseCase: RefreshTokenUseCase;
 let createUserUseCase: CreateUserUseCase;
 let validate2faKeyUseCase: Validate2faKeyUseCase;
 let generate2faKeyUseCase: Generate2faKeyUseCase;
-let usersSecondFactorKeyRepository: InMemoryUserSecondFactorKeyRepository;
 let validateCredentialsUseCase: ValidateCredentialsUseCase;
 let validateTwoFactorKeyUseCase: ValidateTwoFactorKeyUseCase;
 
@@ -40,8 +41,8 @@ describe("Refresh Token Use Case", () => {
 
     userTokensRepository = new InMemoryUserTokensRepository();
     usersRepository = new InMemoryUsersRepository();
-    usersSecondFactorKeyRepository =
-      new InMemoryUserSecondFactorKeyRepository();
+    userSecondFactorKeyRepository = new InMemoryUserSecondFactorKeyRepository();
+    userSecondFactorKeyRepository = new InMemoryUserSecondFactorKeyRepository();
 
     refreshTokenUseCase = new RefreshTokenUseCase(
       userTokensRepository,
@@ -51,11 +52,11 @@ describe("Refresh Token Use Case", () => {
     createUserUseCase = new CreateUserUseCase(usersRepository);
 
     validate2faKeyUseCase = new Validate2faKeyUseCase(
-      usersSecondFactorKeyRepository,
+      userSecondFactorKeyRepository,
       otp
     );
     generate2faKeyUseCase = new Generate2faKeyUseCase(
-      usersSecondFactorKeyRepository,
+      userSecondFactorKeyRepository,
       usersRepository,
       storageProvider,
       otp
@@ -64,6 +65,15 @@ describe("Refresh Token Use Case", () => {
     validateCredentialsUseCase = new ValidateCredentialsUseCase(
       usersRepository,
       cacheProvider
+    );
+
+    validateTwoFactorKeyUseCase = new ValidateTwoFactorKeyUseCase(
+      userSecondFactorKeyRepository,
+      usersRepository,
+      userTokensRepository,
+      cacheProvider,
+      otp,
+      dateProvider
     );
   });
 
@@ -81,7 +91,7 @@ describe("Refresh Token Use Case", () => {
     const { id: user_id } = await createUserUseCase.execute(userDTO);
 
     await generate2faKeyUseCase.execute(user_id);
-    const { key } = await usersSecondFactorKeyRepository.findByUserId(
+    const { key } = await userSecondFactorKeyRepository.findByUserId(
       user_id,
       false
     );
@@ -98,17 +108,14 @@ describe("Refresh Token Use Case", () => {
     });
 
     totp_code = otp.generateToken(key);
-    const { token: firstToken, refreshToken: firstRefreshToken } =
-      await validateTwoFactorKeyUseCase.execute({
-        temporaryToken,
-        totp_code,
-      });
+    const { refreshToken } = await validateTwoFactorKeyUseCase.execute({
+      temporaryToken,
+      totp_code,
+    });
 
-    const response = await refreshTokenUseCase.execute(firstRefreshToken);
+    const response = await refreshTokenUseCase.execute(refreshToken);
 
     expect(response).toHaveProperty("token");
     expect(response).toHaveProperty("refreshToken");
-    expect(response.token).not.toBe(firstToken);
-    expect(response.refreshToken).not.toBe(firstRefreshToken);
   });
 });
