@@ -1,3 +1,5 @@
+import "dotenv/config";
+
 import { InMemoryUserTokensRepository } from "@modules/auth/repositories/in-memory/InMemoryUserTokensRepository";
 import { InMemoryUserSecondFactorKeyRepository } from "@modules/users/repositories/in-memory/InMemoryUserSecondFactorKeyRepository";
 import { InMemoryUsersRepository } from "@modules/users/repositories/in-memory/InMemoryUsersRepository";
@@ -31,21 +33,22 @@ let validateTwoFactorKeyUseCase: ValidateTwoFactorKeyUseCase;
 
 describe("Refresh Token Use Case", () => {
   beforeEach(() => {
-    userTokensRepository = new InMemoryUserTokensRepository();
+    cacheProvider = new RedisCacheProvider();
     dateProvider = new DayjsDateProvider();
+    otp = new OTPLibProvider();
+    storageProvider = new LocalStorageProvider();
+
+    userTokensRepository = new InMemoryUserTokensRepository();
+    usersRepository = new InMemoryUsersRepository();
+    usersSecondFactorKeyRepository =
+      new InMemoryUserSecondFactorKeyRepository();
+
     refreshTokenUseCase = new RefreshTokenUseCase(
       userTokensRepository,
       dateProvider
     );
 
-    usersRepository = new InMemoryUsersRepository();
     createUserUseCase = new CreateUserUseCase(usersRepository);
-
-    usersSecondFactorKeyRepository =
-      new InMemoryUserSecondFactorKeyRepository();
-
-    otp = new OTPLibProvider();
-    storageProvider = new LocalStorageProvider();
 
     validate2faKeyUseCase = new Validate2faKeyUseCase(
       usersSecondFactorKeyRepository,
@@ -58,7 +61,6 @@ describe("Refresh Token Use Case", () => {
       otp
     );
 
-    cacheProvider = new RedisCacheProvider();
     validateCredentialsUseCase = new ValidateCredentialsUseCase(
       usersRepository,
       cacheProvider
