@@ -1,5 +1,8 @@
 import "dotenv/config";
 
+import { sign } from "jsonwebtoken";
+
+import auth from "@config/auth";
 import { InMemoryUserTokensRepository } from "@modules/auth/repositories/in-memory/InMemoryUserTokensRepository";
 import { UserSecondFactorKey } from "@modules/users/infra/typeorm/entities/UserSecondFactorKey";
 import { InMemoryUserSecondFactorKeyRepository } from "@modules/users/repositories/in-memory/InMemoryUserSecondFactorKeyRepository";
@@ -12,9 +15,11 @@ import { IDateProvider } from "@shared/container/providers/DateProvider/IDatePro
 import { DayjsDateProvider } from "@shared/container/providers/DateProvider/implementations/DayJsDateProvider";
 import { OTPLibProvider } from "@shared/container/providers/OneTimePasswordProvider/implementations/OTPLibProvider";
 import { LocalStorageProvider } from "@shared/container/providers/StorageProvider/implementations/LocalStorageProvider";
+import { sleep } from "@utils/sleep";
 
 import { ValidateCredentialsUseCase } from "../validateCredentials/validateCredentialsUseCase";
 import { ValidateTwoFactorKeyUseCase } from "../validateTwoFactorKey/validateTwoFactorKeyUseCase";
+import { RefreshTokenError } from "./refreshTokenError";
 import { RefreshTokenUseCase } from "./refreshTokenUseCase";
 
 let userTokensRepository: InMemoryUserTokensRepository;
@@ -118,4 +123,60 @@ describe("Refresh Token Use Case", () => {
     expect(response).toHaveProperty("token");
     expect(response).toHaveProperty("refreshToken");
   });
+
+  it(
+    "Should not be able do generate a new token and refresh token " +
+      "if refresh token not exists",
+    async () => {
+      // criar usuário
+      const userDTO = {
+        name: "John Doe",
+        email: "john.doe@example.com",
+        password: "secret",
+      };
+      const { id: user_id } = await createUserUseCase.execute(userDTO);
+
+      await generate2faKeyUseCase.execute(user_id);
+      const { key } = await userSecondFactorKeyRepository.findByUserId(
+        user_id,
+        false
+      );
+
+      let totp_code = otp.generateToken(key);
+      await validate2faKeyUseCase.execute({
+        user_id,
+        totp_code,
+      });
+
+      const { temporaryToken } = await validateCredentialsUseCase.execute({
+        email: userDTO.email,
+        password: userDTO.password,
+      });
+
+      totp_code = otp.generateToken(key);
+      const { refreshToken } = await validateTwoFactorKeyUseCase.execute({
+        temporaryToken,
+        totp_code,
+      });
+
+      await sleep(2000);
+
+      const wrongRefreshToken = sign(
+        {
+          email: userDTO.email,
+        },
+        auth.secret_refresh_token,
+        {
+          subject: user_id,
+          expiresIn: auth.expires_in_refresh_token,
+        }
+      );
+
+      expect(refreshToken).not.toStrictEqual(wrongRefreshToken);
+
+      await expect(
+        refreshTokenUseCase.execute(wrongRefreshToken)
+      ).rejects.toBeInstanceOf(RefreshTokenError.RefreshTokenNotExists);
+    }
+  );
 });
