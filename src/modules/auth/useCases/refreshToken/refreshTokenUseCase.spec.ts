@@ -185,7 +185,7 @@ describe("Refresh Token Use Case", () => {
 
   it(
     "Should not be able do generate a new token and refresh token " +
-      "if refresh token expired",
+      "if stored refresh token expired",
     async () => {
       // criar usuário
       const userDTO = {
@@ -214,6 +214,49 @@ describe("Refresh Token Use Case", () => {
 
       totp_code = otp.generateToken(key);
       auth.expires_refresh_token_days = 0;
+      const { refreshToken } = await validateTwoFactorKeyUseCase.execute({
+        temporaryToken,
+        totp_code,
+      });
+      await sleep(2500);
+
+      await expect(
+        refreshTokenUseCase.execute(refreshToken)
+      ).rejects.toBeInstanceOf(RefreshTokenError.RefreshTokenExpires);
+    }
+  );
+
+  it(
+    "Should not be able do generate a new token and refresh token " +
+      "if refresh token expired",
+    async () => {
+      // criar usuário
+      const userDTO = {
+        name: "John Doe",
+        email: "john.doe@example.com",
+        password: "secret",
+      };
+      const { id: user_id } = await createUserUseCase.execute(userDTO);
+
+      await generate2faKeyUseCase.execute(user_id);
+      const { key } = await userSecondFactorKeyRepository.findByUserId(
+        user_id,
+        false
+      );
+
+      let totp_code = otp.generateToken(key);
+      await validate2faKeyUseCase.execute({
+        user_id,
+        totp_code,
+      });
+
+      const { temporaryToken } = await validateCredentialsUseCase.execute({
+        email: userDTO.email,
+        password: userDTO.password,
+      });
+
+      totp_code = otp.generateToken(key);
+      auth.expires_in_refresh_token = "2s";
       const { refreshToken } = await validateTwoFactorKeyUseCase.execute({
         temporaryToken,
         totp_code,

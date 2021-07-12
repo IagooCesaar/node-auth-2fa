@@ -1,4 +1,4 @@
-import { sign, verify } from "jsonwebtoken";
+import { sign, TokenExpiredError, verify } from "jsonwebtoken";
 import { inject, injectable } from "tsyringe";
 
 import auth from "@config/auth";
@@ -28,10 +28,15 @@ class RefreshTokenUseCase {
   ) {}
 
   async execute(refreshToken: string): Promise<IResponse> {
-    const { email, sub: user_id } = verify(
-      refreshToken,
-      auth.secret_refresh_token
-    ) as IPayload;
+    let decoded = null;
+    try {
+      decoded = verify(refreshToken, auth.secret_refresh_token) as IPayload;
+    } catch (error) {
+      if (error instanceof TokenExpiredError) {
+        throw new RefreshTokenError.RefreshTokenExpires();
+      }
+    }
+    const { email, sub: user_id } = decoded;
 
     const userToken =
       await this.userTokensRepository.findByUserIdAndRefreshToken(
