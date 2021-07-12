@@ -9,6 +9,12 @@ export namespace EnsureAuthenticatedError {
     }
   }
 
+  export class TokenExpired extends AppError {
+    constructor() {
+      super("EnsureAuthenticatedError.TokenExpired", "Token expired", 401);
+    }
+  }
+
   export class InvalidToken extends AppError {
     constructor() {
       super("EnsureAuthenticatedError.InvalidToken", "Invalid token", 401);

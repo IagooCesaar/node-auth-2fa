@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { verify } from "jsonwebtoken";
+import { TokenExpiredError, verify } from "jsonwebtoken";
 
 import auth from "@config/auth";
 import { EnsureAuthenticatedError } from "@shared/errors/ensureAuthenticatedError";
@@ -25,6 +25,9 @@ export async function ensureAuthenticated(
     };
     next();
   } catch (error) {
+    if (error instanceof TokenExpiredError) {
+      throw new EnsureAuthenticatedError.TokenExpired();
+    }
     throw new EnsureAuthenticatedError.InvalidToken();
   }
 }
