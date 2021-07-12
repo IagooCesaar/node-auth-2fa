@@ -113,15 +113,19 @@ describe("Refresh Token Use Case", () => {
     });
 
     totp_code = otp.generateToken(key);
-    const { refreshToken } = await validateTwoFactorKeyUseCase.execute({
+    const { token, refreshToken } = await validateTwoFactorKeyUseCase.execute({
       temporaryToken,
       totp_code,
     });
+
+    await sleep(2000);
 
     const response = await refreshTokenUseCase.execute(refreshToken);
 
     expect(response).toHaveProperty("token");
     expect(response).toHaveProperty("refreshToken");
+    expect(response.token).not.toStrictEqual(token);
+    expect(response.refreshToken).not.toStrictEqual(refreshToken);
   });
 
   it(
