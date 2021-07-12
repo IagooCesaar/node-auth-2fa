@@ -1,6 +1,5 @@
 import request from "supertest";
 import { Connection } from "typeorm";
-import { v4 as uuidV4 } from "uuid";
 
 import { OTPLibProvider } from "@shared/container/providers/OneTimePasswordProvider/implementations/OTPLibProvider";
 import { app } from "@shared/infra/http/app";
