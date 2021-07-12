@@ -23,7 +23,6 @@ describe("Generate 2FA Controller", () => {
   });
 
   it("Should be able to validate a new QRCode for a valid user", async () => {
-    //
     const responseUser = await request(app).post("/users").send({
       name: "John Doe",
       email: "john.doe@example.com",
