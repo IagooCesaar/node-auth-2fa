@@ -22,9 +22,6 @@ describe("Generate 2FA Controller", () => {
     await connection.close();
   });
 
-  // throw new Validate2faKeyError.NoKeysPendingValidation();
-  // throw new Validate2faKeyError.IncorrectCode();
-
   it("Should be able to validate a new QRCode for a valid user", async () => {
     //
     const responseUser = await request(app).post("/users").send({
