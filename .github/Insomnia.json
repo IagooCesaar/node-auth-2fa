@@ -1,0 +1,351 @@
+{
+  "_type":"export",
+  "__export_format":4,
+  "__export_date":"2021-07-14T11:50:09.752Z",
+  "__export_source":"insomnia.desktop.app:v2021.4.1",
+  "resources":[
+     {
+        "_id":"req_2c94103667974ceaaf89f591a4cb35c4",
+        "parentId":"fld_43263f71654145339833c44e32321c3d",
+        "modified":1626114934907,
+        "created":1625758107140,
+        "url":"{{ _.baseURL }}/sessions",
+        "name":"Session (Validate Credentials)",
+        "description":"",
+        "method":"POST",
+        "body":{
+           "mimeType":"application/json",
+           "text":"{\n\t\"email\": \"iagocesar.nogueira@gmail.com\",\n\t\"password\": \"abc123\"\n}"
+        },
+        "parameters":[
+           
+        ],
+        "headers":[
+           {
+              "name":"Content-Type",
+              "value":"application/json",
+              "id":"pair_100c4f2d628b404eb9e1740129588a2f"
+           }
+        ],
+        "authentication":{
+           
+        },
+        "metaSortKey":-1625763714523,
+        "isPrivate":false,
+        "settingStoreCookies":true,
+        "settingSendCookies":true,
+        "settingDisableRenderRequestBody":false,
+        "settingEncodeUrl":true,
+        "settingRebuildPath":true,
+        "settingFollowRedirects":"global",
+        "_type":"request"
+     },
+     {
+        "_id":"fld_43263f71654145339833c44e32321c3d",
+        "parentId":"wrk_7d1d703560624c9ea45b169c6de547ec",
+        "modified":1625758101631,
+        "created":1625758101631,
+        "name":"Authentication",
+        "description":"",
+        "environment":{
+           
+        },
+        "environmentPropertyOrder":null,
+        "metaSortKey":-1625758101631,
+        "_type":"request_group"
+     },
+     {
+        "_id":"wrk_7d1d703560624c9ea45b169c6de547ec",
+        "parentId":null,
+        "modified":1625498269418,
+        "created":1625498269418,
+        "name":"Personal | Auth + 2FA",
+        "description":"",
+        "scope":"design",
+        "_type":"workspace"
+     },
+     {
+        "_id":"req_5062cf06624942aaa4429e128a1eace2",
+        "parentId":"fld_43263f71654145339833c44e32321c3d",
+        "modified":1626114944696,
+        "created":1625763714473,
+        "url":"{{ _.baseURL }}/sessions/two-factor",
+        "name":"TwoFactor Validation",
+        "description":"",
+        "method":"POST",
+        "body":{
+           "mimeType":"application/json",
+           "text":"{\n\t\"totp_code\": \"607358\",\n\t\"temporaryToken\": \"489a1c64-c6c3-4831-adf3-974e0f8393b3\"\n}"
+        },
+        "parameters":[
+           
+        ],
+        "headers":[
+           {
+              "name":"Content-Type",
+              "value":"application/json",
+              "id":"pair_096b19c546bb4d3995a2aee02b54d591"
+           }
+        ],
+        "authentication":{
+           
+        },
+        "metaSortKey":-1625763714473,
+        "isPrivate":false,
+        "settingStoreCookies":true,
+        "settingSendCookies":true,
+        "settingDisableRenderRequestBody":false,
+        "settingEncodeUrl":true,
+        "settingRebuildPath":true,
+        "settingFollowRedirects":"global",
+        "_type":"request"
+     },
+     {
+        "_id":"req_aaa599d4fa1f44eea6fb45c2e6111cd3",
+        "parentId":"fld_43263f71654145339833c44e32321c3d",
+        "modified":1626114963995,
+        "created":1625837020515,
+        "url":"{{ _.baseURL }}/sessions/refresh-token",
+        "name":"Refresh Token",
+        "description":"",
+        "method":"POST",
+        "body":{
+           "mimeType":"application/json",
+           "text":"{\n\t\"refreshToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImlhZ29jZXNhci5ub2d1ZWlyYUBnbWFpbC5jb20iLCJpYXQiOjE2MjYxMTQ5NTMsImV4cCI6MTYyNjE0Mzc1Mywic3ViIjoiYzFkMGY0MWYtZGEwYi00ZTUzLWIyNDQtZmEyMWE2N2I4MTYzIn0.Zr1I4EhPxziF6QuX57l1d4TYFSU3dpRZvsOoCstnUvM\"\n}"
+        },
+        "parameters":[
+           
+        ],
+        "headers":[
+           {
+              "name":"Content-Type",
+              "value":"application/json",
+              "id":"pair_096b19c546bb4d3995a2aee02b54d591"
+           }
+        ],
+        "authentication":{
+           
+        },
+        "metaSortKey":-1625760910806.5,
+        "isPrivate":false,
+        "settingStoreCookies":true,
+        "settingSendCookies":true,
+        "settingDisableRenderRequestBody":false,
+        "settingEncodeUrl":true,
+        "settingRebuildPath":true,
+        "settingFollowRedirects":"global",
+        "_type":"request"
+     },
+     {
+        "_id":"req_45f7e14ba1854eaab4190bd3a8b0dd89",
+        "parentId":"fld_53fe6055549a4989bf4b93a39c0daf44",
+        "modified":1625835098037,
+        "created":1625834919909,
+        "url":"{{ _.baseURL }}/users/profile",
+        "name":"Profile",
+        "description":"",
+        "method":"GET",
+        "body":{
+           
+        },
+        "parameters":[
+           
+        ],
+        "headers":[
+           
+        ],
+        "authentication":{
+           "type":"bearer",
+           "token":"{{ _.token }}"
+        },
+        "metaSortKey":-1625834919909,
+        "isPrivate":false,
+        "settingStoreCookies":true,
+        "settingSendCookies":true,
+        "settingDisableRenderRequestBody":false,
+        "settingEncodeUrl":true,
+        "settingRebuildPath":true,
+        "settingFollowRedirects":"global",
+        "_type":"request"
+     },
+     {
+        "_id":"fld_53fe6055549a4989bf4b93a39c0daf44",
+        "parentId":"wrk_7d1d703560624c9ea45b169c6de547ec",
+        "modified":1625498318134,
+        "created":1625498318134,
+        "name":"Users",
+        "description":"",
+        "environment":{
+           
+        },
+        "environmentPropertyOrder":null,
+        "metaSortKey":-1625498318134,
+        "_type":"request_group"
+     },
+     {
+        "_id":"req_a17464eda7754299a15db07e9c40d203",
+        "parentId":"fld_53fe6055549a4989bf4b93a39c0daf44",
+        "modified":1625765898261,
+        "created":1625575828157,
+        "url":"{{ _.baseURL }}/users/generate2fa",
+        "name":"Generate 2FA",
+        "description":"",
+        "method":"POST",
+        "body":{
+           "mimeType":"application/json",
+           "text":"{\n\t\"user_id\": \"55094550-217b-464f-bf63-ba15b6fe6c36\"\n}"
+        },
+        "parameters":[
+           
+        ],
+        "headers":[
+           {
+              "name":"Content-Type",
+              "value":"application/json",
+              "id":"pair_efc4d9811c7947a3a49e457953dadf9d"
+           }
+        ],
+        "authentication":{
+           
+        },
+        "metaSortKey":-1625575828157,
+        "isPrivate":false,
+        "settingStoreCookies":true,
+        "settingSendCookies":true,
+        "settingDisableRenderRequestBody":false,
+        "settingEncodeUrl":true,
+        "settingRebuildPath":true,
+        "settingFollowRedirects":"global",
+        "_type":"request"
+     },
+     {
+        "_id":"req_aae75d4780424cf7a86a92408c9db060",
+        "parentId":"fld_53fe6055549a4989bf4b93a39c0daf44",
+        "modified":1625835036829,
+        "created":1625592796432,
+        "url":"{{ _.baseURL }}/users/validate2fa",
+        "name":"Validate 2FA",
+        "description":"",
+        "method":"POST",
+        "body":{
+           "mimeType":"application/json",
+           "text":"{\n\t\"user_id\": \"c1d0f41f-da0b-4e53-b244-fa21a67b8163\",\n\t\"totp_code\": \"889597\"\n}"
+        },
+        "parameters":[
+           
+        ],
+        "headers":[
+           {
+              "name":"Content-Type",
+              "value":"application/json",
+              "id":"pair_efc4d9811c7947a3a49e457953dadf9d"
+           }
+        ],
+        "authentication":{
+           
+        },
+        "metaSortKey":-1625537075226,
+        "isPrivate":false,
+        "settingStoreCookies":true,
+        "settingSendCookies":true,
+        "settingDisableRenderRequestBody":false,
+        "settingEncodeUrl":true,
+        "settingRebuildPath":true,
+        "settingFollowRedirects":"global",
+        "_type":"request"
+     },
+     {
+        "_id":"req_4b9a7e5e6529462a98ebee71a089c642",
+        "parentId":"fld_53fe6055549a4989bf4b93a39c0daf44",
+        "modified":1625834970665,
+        "created":1625498322295,
+        "url":"{{ _.baseURL }}/users",
+        "name":"Create User",
+        "description":"",
+        "method":"POST",
+        "body":{
+           "mimeType":"application/json",
+           "text":"{\n\t\"name\": \"Iago César Fernandes Nogueira\",\n\t\"email\": \"iagocesar.nogueira@gmail.com\",\n\t\"password\": \"abc123\"\n}"
+        },
+        "parameters":[
+           
+        ],
+        "headers":[
+           {
+              "name":"Content-Type",
+              "value":"application/json",
+              "id":"pair_acc7e60f10b24745807e055866290995"
+           }
+        ],
+        "authentication":{
+           
+        },
+        "metaSortKey":-1625498322295,
+        "isPrivate":false,
+        "settingStoreCookies":true,
+        "settingSendCookies":true,
+        "settingDisableRenderRequestBody":false,
+        "settingEncodeUrl":true,
+        "settingRebuildPath":true,
+        "settingFollowRedirects":"global",
+        "_type":"request"
+     },
+     {
+        "_id":"env_8d0b65d4960bd72d0173240f80bbc45788a4c86e",
+        "parentId":"wrk_7d1d703560624c9ea45b169c6de547ec",
+        "modified":1625498269667,
+        "created":1625498269667,
+        "name":"Base Environment",
+        "data":{
+           
+        },
+        "dataPropertyOrder":null,
+        "color":null,
+        "isPrivate":false,
+        "metaSortKey":1625498269667,
+        "_type":"environment"
+     },
+     {
+        "_id":"jar_8d0b65d4960bd72d0173240f80bbc45788a4c86e",
+        "parentId":"wrk_7d1d703560624c9ea45b169c6de547ec",
+        "modified":1625498269692,
+        "created":1625498269692,
+        "name":"Default Jar",
+        "cookies":[
+           
+        ],
+        "_type":"cookie_jar"
+     },
+     {
+        "_id":"spc_a37ebc43499f40c4b835de2a47d7670a",
+        "parentId":"wrk_7d1d703560624c9ea45b169c6de547ec",
+        "modified":1625498269425,
+        "created":1625498269425,
+        "fileName":"Personal | Auth + 2FA",
+        "contents":"",
+        "contentType":"yaml",
+        "_type":"api_spec"
+     },
+     {
+        "_id":"env_e947f36e93fc4c19bb8538739fc07c26",
+        "parentId":"env_8d0b65d4960bd72d0173240f80bbc45788a4c86e",
+        "modified":1626114982260,
+        "created":1625498279532,
+        "name":"Local",
+        "data":{
+           "baseURL":"http://localhost:3333",
+           "token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MjYxMTQ5NjQsImV4cCI6MTYyNjExNjc2NCwic3ViIjoiYzFkMGY0MWYtZGEwYi00ZTUzLWIyNDQtZmEyMWE2N2I4MTYzIn0.wSz-D8A86tD3SBvDcy0W4wRR8FBr8q7JKNUf9TkdQ2Q"
+        },
+        "dataPropertyOrder":{
+           "&":[
+              "baseURL",
+              "token"
+           ]
+        },
+        "color":null,
+        "isPrivate":false,
+        "metaSortKey":1625498279532,
+        "_type":"environment"
+     }
+  ]
+}
