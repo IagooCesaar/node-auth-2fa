@@ -62,6 +62,51 @@ Para executar o script de testes, execute o comando `yarn test`.
 Uma vez os testes tenham sido executando ao menos uma vez e que a API esteja em execução (ainda em ambiente de desenvolvimento), o relatório de cobertura de testes estará disponível na rota http://localhost:3333/api/coverage
 
 <h2>Funcionamento do API</h2>
+
+O método utilizado para segundo fator de autenticação nesta API será o **TOTP** (Time-Based One Time Password), ou senha de uso único baseada no tempo. TOTP é um algorítimo que gera senhas únicas baseando-se no tempo para garantir que as senhas sejam únicas. Seu funcionamento consiste em gerar um código numérico, geralmente de seis dígitos, dado o conjunto de uma **chave secreta** e uma referência para **época** (data/hora).
+
+<h3>Utilizando a API</h3>
+
+O primeiro passo é cadastrar um usuário na API. Se tudo ocorrer bem, será retornado um objeto contendo os dados do usuário e também uma URL onde o QR Code foi disponibilizado.  Veja a seguir exemplo de um QR Code criado pela API:
+
+<div style="text-align:center">
+<img src="https://github.com/IagooCesaar/node-auth-2fa/blob/main/tmp/qrcode/55094550-217b-464f-bf63-ba15b6fe6c36.png?raw=true" alt="Exemplo de QR Code">
+</div>
+
+> Neste QR Code está inserido uma URI, como `otpauth://totp/${nome da aplicação}:${identificador da conta}?secret=${chave secreta}&period=${periodo de validade em segundos}&digits=${quantidade de dígitos do código}&algorithm=${algoritimo utilizado}&issuer=${provedor}`
+
+ Ao efetuar a leitura do QR Code com aplicativo compatível, como o [Microsoft Authenticator](https://www.microsoft.com/pt-br/account/authenticator), serão exibidos códigos de seis dígitos a cada 30 segundos.
+ 
+ O próximo passo então será validar o código gerado pelo aplicativo, fornecendo o ID do usuário (retornado no objeto ao criar o usuário) e o código exibido pelo aplicativo.
+
+ Validando o código, o usuário poderá então inciar a etapa de autenticação. Primeiramente deverão ser fornecidas as credenciais (e-mail e senha). Tudo ocorrendo bem, será retornado um **token temporário** com validade de 3 minutos.
+ Envie este token e o código gerado pelo aplicativo para validação do segundo fator de autenticação. Tudo ocorrendo bem, será retornado um **token** e um **refresh token** para o controle de sessão.
+
+ [👉 Neste link você poderá acessar um vídeo 📹📹](https://www.youtube.com/watch?v=z35aPwAaETk) onde demonstro o funcionamento da API.
+
 <h3>Diagrama de Entidade e Relacionamento</h3>
+
+A seguir, diagrama de entidade e relacionamento do banco de dados:
+
+<div style="text-align:center">
+<img src="https://github.com/IagooCesaar/node-auth-2fa/blob/main/.github/der-auth2fa.png?raw=true" alt="Diagrama de entidade e relacionamento">
+</div>
+
+
 <h3>Rotas da API</h3>
-<h3>Fluxo da API</h3>
+
+Se você utiliza o Insomnia, disponibilizei [arquivo de configuração](https://github.com/IagooCesaar/node-auth-2fa/blob/main/.github/Insomnia.json) para que possa importar todas as rotas da aplicação.
+
+- **POST** `/users/`: espera que sejam enviados os dados cadastrais do usuário e retorna o dados deste usuário, confirmando a criação do mesmo, e também uma URL onde o QR Code poderá ser acessado.
+
+- **POST** `/users/generate2fa`: espera que seja enviado o ID do usuário e retorna URL onde o novo QR Code poderá ser acessado
+
+- **POST** `/users/validate2fa`: esperada que sejam enviados o ID do usuário e o código de seis dígitos gerado pelo aplicativo autenticador
+
+- **GET** `/users/profile`: espera que seja fornecido token de autenticação e retorna os dados do usuário autenticado
+
+- **POST** `/sessions`: espera que sejam fornecidos e-mail e senha e retorna um token temporário
+
+- **POST** `/sessions/two-factor`: espera que sejam fornecidos o token temporário e código de seus dígitos gerado pelo aplicativo autenticador e retorna dados do usuário, token e refresh token
+
+- **POST** `/sessions/refresh-token`: esperada que seja enviado o refresh token e retorna novos token e refresh token
